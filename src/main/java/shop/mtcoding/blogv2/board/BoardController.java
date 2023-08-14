@@ -24,9 +24,9 @@ public class BoardController {
     // 5. view or data 응답
     @PostMapping("/board/save")
     public String save(BoardRequest.SaveDTO saveDTO) { // 1. 데이터 받기
-        // 테스트 해보기
-        System.out.println("title : " +saveDTO.getTitle());
-        System.out.println("content : " +saveDTO.getContent());
+        // 테스트 후엔 주석처리 하기
+        // System.out.println("title : " +saveDTO.getTitle());
+        // System.out.println("content : " +saveDTO.getContent());
 
         // 2. 인증체크 (:TODO)
 
