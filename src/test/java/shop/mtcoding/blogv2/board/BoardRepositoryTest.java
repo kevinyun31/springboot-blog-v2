@@ -7,6 +7,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.blogv2.user.User;
 
@@ -16,26 +23,36 @@ public class BoardRepositoryTest {
     @Autowired
     private BoardRepository boardRepository;
 
-@Test
-public void mFindAll_test(){
-    boardRepository.mFindAll();
-}
+    @Test
+    public void findAll_paging_test() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        Page<Board> boardPG = boardRepository.findAll(pageable);
+        ObjectMapper om = new ObjectMapper();
+        String json = om.writeValueAsString(boardPG); // 자바객체를 JSON으로 변환
+        System.out.println(json);
+    }
+    
 
-@Test
-public void findAll_test(){
-    System.out.println("조회 직전");
-    List<Board> boarList = boardRepository.findAll();
-    System.out.println("조회 후 : LAZY");
-    // 행 : 5개 -> 객체 : 5개
-    // 각행 : Board (id=1, title=제목1, content=내용, created_at=날짜, User(id=1))
-System.out.println(boarList.get(0).getId()); // 1번 (조회 X)
-System.out.println(boarList.get(0).getUser().getId()); // 1번 (조회 X)
+    @Test
+    public void mFindAll_test() {
+        boardRepository.mFindAll();
+    }
 
-// LAZY Loading - 지연로딩
-// 연관된 객체에 null을 참조하려고 하면 조회가 일어난다
-// null -> ssar  LAZY 되어 있어서 없어야 하는데 하이버네이트가 없으니 알아서 찾아서 조회힌다
-System.out.println(boarList.get(0).getUser().getUsername()); // 1번 (조회 O)
-}
+    @Test
+    public void findAll_test() {
+        System.out.println("조회 직전");
+        List<Board> boarList = boardRepository.findAll();
+        System.out.println("조회 후 : LAZY");
+        // 행 : 5개 -> 객체 : 5개
+        // 각행 : Board (id=1, title=제목1, content=내용, created_at=날짜, User(id=1))
+        System.out.println(boarList.get(0).getId()); // 1번 (조회 X)
+        System.out.println(boarList.get(0).getUser().getId()); // 1번 (조회 X)
+
+        // LAZY Loading - 지연로딩
+        // 연관된 객체에 null을 참조하려고 하면 조회가 일어난다
+        // null -> ssar LAZY 되어 있어서 없어야 하는데 하이버네이트가 없으니 알아서 찾아서 조회힌다
+        System.out.println(boarList.get(0).getUser().getUsername()); // 1번 (조회 O)
+    }
 
     @Test
     public void save_test() {
