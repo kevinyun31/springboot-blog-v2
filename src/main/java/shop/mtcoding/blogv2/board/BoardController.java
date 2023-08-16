@@ -20,14 +20,18 @@ public class BoardController {
 
     // localhost:8080?page=1&keyword=바나나
     @GetMapping("/")
-    public String 봉준이(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
+    public String index(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
        Page<Board> boardPG = boardService.게시글목록보기(page);
        request.setAttribute("boardPG", boardPG );
+       request.setAttribute("prevPage", boardPG.getNumber() -1 );
+       request.setAttribute("nextPage", boardPG.getNumber() +1 );
+
         return "index";
     }
 
     @GetMapping("/board/saveForm")
     public String saveForm() {
+
         return "board/saveForm";
     }
 
