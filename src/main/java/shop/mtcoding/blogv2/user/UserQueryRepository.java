@@ -22,4 +22,6 @@ public class UserQueryRepository {
         return em.find(User.class, id);
     }
 
+    
+
 } // class

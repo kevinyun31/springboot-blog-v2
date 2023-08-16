@@ -1,5 +1,7 @@
 package shop.mtcoding.blogv2.board;
 
+import java.net.InetAddress;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,5 +27,9 @@ public class BoardService {
 
         // 생성한 Board 객체를 Repository를 통해 데이터베이스에 저장
         boardRepository.save(board);
+    }
+
+    public void 게시글목록보기(Integer page) {
+        boardRepository.findAll();
     }
 }

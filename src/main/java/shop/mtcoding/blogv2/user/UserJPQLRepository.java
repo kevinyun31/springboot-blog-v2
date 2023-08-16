@@ -21,3 +21,4 @@ public interface UserJPQLRepository extends JpaRepository<User, Integer> {
     @Query(value = "insert into user_tb(created_at, email, password, username) values(now(), :email, :password, :username)", nativeQuery = true)
     void mSave(@Param("username") String username, @Param("password") String password, @Param("email") String email);
 }
+ 
