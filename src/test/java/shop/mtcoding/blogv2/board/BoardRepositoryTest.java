@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,11 +33,13 @@ public class BoardRepositoryTest {
         Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
         Page<Board> boardPG = boardRepository.findAll(pageable);
         ObjectMapper om = new ObjectMapper();
+
+        // ObjectMapper는 boardPG객체의 getter를 호출하면서 json을 만든다.
         String json = om.writeValueAsString(boardPG); // 자바객체를 JSON으로 변환
         System.out.println(json);
     }
+       
     
-
     @Test
     public void mFindAll_test() {
         boardRepository.mFindAll();

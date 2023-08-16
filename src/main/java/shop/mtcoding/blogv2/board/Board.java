@@ -34,7 +34,7 @@ public class Board {
     @Column(nullable = true, length = 10000)
     private String content;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user; // 1+n 
 
     @CreationTimestamp // 생성될때 시간을 자동으로 넣어 줌
@@ -48,6 +48,4 @@ public class Board {
         this.user = user;
         this.createdAt = createdAt;
     }
-
-
 }

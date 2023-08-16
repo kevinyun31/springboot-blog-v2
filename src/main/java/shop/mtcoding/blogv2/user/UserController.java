@@ -20,6 +20,16 @@ public class UserController {
     @Autowired
     private HttpSession session;
 
+    // 브라우저 GET /logout 요청을 함, (request1)
+    // 서버는  / 주소를 응답의 헤더에 담음 (Location), 상태코드 302
+    // 브라우저는 GET / 로 재용청을 함. (request2)
+    // 최종적으로 index 페이지 응답받고 렌더링함
+    @GetMapping("/logout")
+    public String logout() {
+        session.invalidate();
+        return "redirect:/"; // 요청이 두번 일어남. 3백번대 응답 받고 다시 재요청 한다.
+    }
+
     // C - V
     @GetMapping("/joinForm")
     public String joinForm() {
@@ -31,7 +41,6 @@ public class UserController {
     public String join(UserRequest.JoinDTO joinDTO) {
         // 10초짜리 코드
         userService.회원가입(joinDTO);
-
         return "user/loginForm"; // persist 초기화
     }
 
@@ -70,7 +79,7 @@ public class UserController {
         return "user/updateForm";
     }
 
-     @PostMapping("/user/update")
+    @PostMapping("/user/update")
     public String update(UserRequest.UpdateDTO updateDTO) {
         // 1. 회원수정 (서비스)
         // 2. 세션동기화
@@ -79,6 +88,4 @@ public class UserController {
         session.setAttribute("sessionUser", user);
         return "redirect:/";
     }
-
-
 }
