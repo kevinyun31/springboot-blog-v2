@@ -12,6 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.blogv2.user.User;
 
+/*
+ *  1. 비지니스 로직 처리(핵심로직)
+ *  2. 트랜잭션 관리
+ *  3. 예외처리 (2단계)
+ *  4. DTO 변환 (2단계)
+ */
+
 @Service
 public class BoardService {
 
@@ -34,8 +41,15 @@ public class BoardService {
     }
 
     public Page<Board> 게시글목록보기(Integer page) {
+        
         Pageable pageable = PageRequest.of(page, 3, Sort.Direction.DESC, "id");
         return boardRepository.findAll(pageable);
 
+    }
+
+    public Board 상세보기(Integer id) {
+
+        // board 만 가져오면 된다!!
+        return boardRepository.findById(id).get();
     }
 }

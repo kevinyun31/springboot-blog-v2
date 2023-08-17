@@ -3,6 +3,7 @@ package shop.mtcoding.blogv2.board;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,8 +39,15 @@ public class BoardRepositoryTest {
         String json = om.writeValueAsString(boardPG); // 자바객체를 JSON으로 변환
         System.out.println(json);
     }
-       
-    
+
+    @Test
+    public void findById_test() {
+        Optional<Board> boardOP = boardRepository.findById(6);
+        if (boardOP.isPresent()) {
+            System.out.println("테스트 : board가 있습니다");
+        }
+    }
+
     @Test
     public void mFindAll_test() {
         boardRepository.mFindAll();

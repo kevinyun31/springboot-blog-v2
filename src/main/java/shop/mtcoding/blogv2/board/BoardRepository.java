@@ -17,6 +17,5 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     // select id, title, content, user_id, created_at from board_tb b inner join user_tb u on b.user_id = u.id; 
     // fetch를 붙여야 *를 하여 전체를 조회한다.
     @Query("select b from Board b join fetch b.user")  // JPA공식이다
-    List<Board> mFindAll();
- 
-}
+    List<Board> mFindAll(); 
+ }
