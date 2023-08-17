@@ -1,7 +1,5 @@
 package shop.mtcoding.blogv2.board;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +12,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
+
 @Controller
 public class BoardController {
 
     @Autowired
     private BoardService boardService;
 
+    // 게시글 삭제
+    @PostMapping("/board/{id}/delete")
+    public String delete(@PathVariable Integer id) {
+        // 인증체크
+        boardService.삭제하기(id);
+        return "redirect:/";
+    }
+
+    // 게시글 수정 화면 호출
+    @GetMapping("/board/{id}/updateForm")
+    public String updateForm(@PathVariable Integer id, Model model) {
+        Board board = boardService.게시글수정보기(id);
+        model.addAttribute("board", board); // request에 담는 것과 동일
+        return "board/updateForm";
+    }
+
+    // 게시글 수정 요청 응답
+    @PostMapping("/board/update")
+    public String update(@PathVariable Integer id, BoardRequest.UpdateDTO updateDTO) { // 1.PathVarible 값 받기
+        // where데이터, body데이터, session값
+        boardService.게시글수정하기(id, updateDTO);
+        return "redirect:/board/"+id;
+    }
+
+    // 게시글 상세보기 화면 호출
     @GetMapping("/board/{id}")
     public String detail(@PathVariable Integer id, Model model) {
         Board board = boardService.상세보기(id);
@@ -28,6 +53,7 @@ public class BoardController {
     }
 
     // localhost:8080?page=1&keyword=바나나
+    // 게시글목록 화면 호출
     @GetMapping("/")
     public String index(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
         Page<Board> boardPG = boardService.게시글목록보기(page);
@@ -38,12 +64,14 @@ public class BoardController {
         return "index";
     }
 
+    // 게시글목록 화면 호출 테스트
     @GetMapping("/test")
     public @ResponseBody Page<Board> test(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
         Page<Board> boardPG = boardService.게시글목록보기(page);
         return boardPG; // ViewResolver (X), MessageConverter (O) -> json 직렬화
     }
 
+    // 글쓰기 화면 호출
     @GetMapping("/board/saveForm")
     public String saveForm() {
         return "board/saveForm";
@@ -54,6 +82,7 @@ public class BoardController {
     // 3. 유효성 검사 (:TODO)
     // 4. 핵심로직 호출 (서비스의 메서드 이용)
     // 5. view or data 응답
+    // 글쓰기 요청 응답
     @PostMapping("/board/save")
     public String save(BoardRequest.SaveDTO saveDTO) { // 1. 데이터 받기
         // 테스트 후엔 주석처리 하기

@@ -30,6 +30,26 @@ public class BoardRepositoryTest {
     private BoardRepository boardRepository;
 
     @Test
+    public void deleteById_test() {
+        boardRepository.deleteById(6);
+    } // rollback
+
+    @Test
+    public void mFindById_test() {
+        boardRepository.mFindById(1);
+    }
+
+    @Test
+    public void findById_test() {
+        Optional<Board> boardOP = boardRepository.findById(5);
+        if (boardOP.isPresent()) { // Board가 존재하면!! (null 안전성 제공)
+            System.out.println("테스트 : board가 있습니다");
+            Board board = boardOP.get();
+            board.getUser().getEmail(); // LazyLoading
+        }
+    }
+
+    @Test
     public void findAll_paging_test() throws JsonProcessingException {
         Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
         Page<Board> boardPG = boardRepository.findAll(pageable);
@@ -38,14 +58,6 @@ public class BoardRepositoryTest {
         // ObjectMapper는 boardPG객체의 getter를 호출하면서 json을 만든다.
         String json = om.writeValueAsString(boardPG); // 자바객체를 JSON으로 변환
         System.out.println(json);
-    }
-
-    @Test
-    public void findById_test() {
-        Optional<Board> boardOP = boardRepository.findById(6);
-        if (boardOP.isPresent()) {
-            System.out.println("테스트 : board가 있습니다");
-        }
     }
 
     @Test

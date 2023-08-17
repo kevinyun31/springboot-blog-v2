@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /*
  * JpaRepository는 Spring Data JPA에서 제공하는 인터페이스로,
@@ -18,4 +19,8 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     // fetch를 붙여야 *를 하여 전체를 조회한다.
     @Query("select b from Board b join fetch b.user")  // JPA공식이다
     List<Board> mFindAll(); 
+
+    @Query("select b from Board b join fetch b.user where b.id = :id")
+    Board mFindById(@Param("id") Integer id);
+    
  }

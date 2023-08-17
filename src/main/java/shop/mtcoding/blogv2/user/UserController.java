@@ -24,6 +24,7 @@ public class UserController {
     // 서버는  / 주소를 응답의 헤더에 담음 (Location), 상태코드 302
     // 브라우저는 GET / 로 재용청을 함. (request2)
     // 최종적으로 index 페이지 응답받고 렌더링함
+    // 로그아웃 요청 응답
     @GetMapping("/logout")
     public String logout() {
         session.invalidate();
@@ -31,12 +32,14 @@ public class UserController {
     }
 
     // C - V
+    // 회원가입 화면 호출
     @GetMapping("/joinForm")
     public String joinForm() {
         return "user/joinForm";
     }
 
     // M - V - C
+    // 회원가입 요청 응답
     @PostMapping("/join")
     public String join(UserRequest.JoinDTO joinDTO) {
         // 10초짜리 코드
@@ -44,11 +47,13 @@ public class UserController {
         return "user/loginForm"; // persist 초기화
     }
 
+    // 로그인화면 호출
     @GetMapping("/loginForm")
     public String loginForm() {
         return "user/loginForm";
     }
 
+    // 로그인 요청 응답
     @PostMapping("/login")
     public @ResponseBody String login(UserRequest.LoginDTO loginDTO) {
         User sessionUser = userService.로그인(loginDTO);
@@ -71,6 +76,7 @@ public class UserController {
     // return Script.href("/");
     // }
 
+    // 회원정보보기 화면 호출 
     @GetMapping("/user/updateForm")
     public String updateForm(HttpServletRequest request) {
         User sessionUser = (User) session.getAttribute("sessionUser");
@@ -79,6 +85,7 @@ public class UserController {
         return "user/updateForm";
     }
 
+    // 회원수정 요청 응답
     @PostMapping("/user/update")
     public String update(UserRequest.UpdateDTO updateDTO) {
         // 1. 회원수정 (서비스)

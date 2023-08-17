@@ -1,6 +1,7 @@
 package shop.mtcoding.blogv2.board;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blogv2.board.BoardRequest.UpdateDTO;
 import shop.mtcoding.blogv2.user.User;
 
 /*
@@ -22,7 +24,7 @@ import shop.mtcoding.blogv2.user.User;
 @Service
 public class BoardService {
 
-    @Autowired    
+    @Autowired
     private BoardRepository boardRepository;
 
     // @Transactional 어노테이션은 트랜잭션을 적용하는 역할을 합니다.
@@ -41,15 +43,50 @@ public class BoardService {
     }
 
     public Page<Board> 게시글목록보기(Integer page) {
-        
+
         Pageable pageable = PageRequest.of(page, 3, Sort.Direction.DESC, "id");
         return boardRepository.findAll(pageable);
 
     }
 
     public Board 상세보기(Integer id) {
-
         // board 만 가져오면 된다!!
-        return boardRepository.findById(id).get();
+        Optional<Board> boardOP = boardRepository.findById(id);
+        if (boardOP.isPresent()) {
+            return boardOP.get();
+        } else {
+            throw new RuntimeException(id + "는 찾을 수 없습니다");
+        }
+    }
+
+    public Board 게시글수정보기(Integer id) {
+        // board 만 가져오면 된다!!
+        Optional<Board> boardOP = boardRepository.findById(id);
+        if (boardOP.isPresent()) {
+            return boardOP.get();
+        } else {
+            throw new RuntimeException(id + "는 찾을 수 없습니다");
+        }
+    }
+
+    @Transactional
+    public void 게시글수정하기(Integer id, UpdateDTO updateDTO) {
+        Optional<Board> boardOP = boardRepository.findById(id);
+        if (boardOP.isPresent()) {
+            Board board = boardOP.get();
+            board.setTitle(updateDTO.getTitle());
+            board.setContent(updateDTO.getContent());
+        } else {
+            throw new RuntimeException(id + "는 찾을 수 없습니다");
+        }
+    } // flush (더티체킹)
+
+    @Transactional
+    public void 삭제하기(Integer id) {
+        try {
+            boardRepository.deleteById(6);
+        } catch (Exception e) {
+            throw new RuntimeException("6번은 없어요");
+        }
     }
 }
