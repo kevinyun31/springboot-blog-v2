@@ -1,11 +1,7 @@
 package shop.mtcoding.blogv2.board;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +29,7 @@ public class BoardRepositoryTest {
         } catch (Exception e) {
             System.out.println("괜찮아");
         }
+
     } // rollback
 
     @Test
@@ -43,24 +37,34 @@ public class BoardRepositoryTest {
         boardRepository.mFindById(1);
     }
 
-
+    @Test
+    public void mFindByIdJoinUserAndReplies_test(){
+        Board board = boardRepository.mFindByIdJoinRepliesInUser(1).get();
+        System.out.println("board : id : "+board.getId());
+        System.out.println("board : title : "+board.getTitle());
+        System.out.println("board : content : "+board.getContent());
+        System.out.println("board : createdAt : "+board.getCreatedAt());
+        System.out.println("===================");
+        board.getReplies().stream().forEach(r -> {
+            System.out.println("board in replies : id : "+r.getId());
+            System.out.println("board in replies : comment : "+r.getComment());
+            System.out.println("board in replies in user : id : "+r.getUser().getId());
+            System.out.println("board in replies in user : username : "+r.getUser().getUsername());
+        });
+        
+    }
 
     @Test
     public void findById_test() {
         Optional<Board> boardOP = boardRepository.findById(5);
-        if (boardOP.isPresent()) { // Board가 존재하면!! (null 안전성 제공)
-            System.out.println("테스트 : board가 있습니다");
-            Board board = boardOP.get();
-            board.getUser().getEmail(); // LazyLoading
-        }
     }
 
     @Test
     public void findAll_paging_test() throws JsonProcessingException {
         Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
         Page<Board> boardPG = boardRepository.findAll(pageable);
-        ObjectMapper om = new ObjectMapper();
 
+        ObjectMapper om = new ObjectMapper();
         // ObjectMapper는 boardPG객체의 getter를 호출하면서 json을 만든다.
         String json = om.writeValueAsString(boardPG); // 자바객체를 JSON으로 변환
         System.out.println(json);
@@ -74,17 +78,17 @@ public class BoardRepositoryTest {
     @Test
     public void findAll_test() {
         System.out.println("조회 직전");
-        List<Board> boarList = boardRepository.findAll();
-        System.out.println("조회 후 : LAZY");
+        List<Board> boardList = boardRepository.findAll();
+        System.out.println("조회 후 : Lazy");
         // 행 : 5개 -> 객체 : 5개
-        // 각행 : Board (id=1, title=제목1, content=내용, created_at=날짜, User(id=1))
-        System.out.println(boarList.get(0).getId()); // 1번 (조회 X)
-        System.out.println(boarList.get(0).getUser().getId()); // 1번 (조회 X)
+        // 각행 : Board (id=1, title=제목1, content=내용1, created_at=날짜, User(id=1))
+        System.out.println(boardList.get(0).getId()); // 1번 (조회 X)
+        System.out.println(boardList.get(0).getUser().getId()); // 1번 (조회 X)
 
-        // LAZY Loading - 지연로딩
-        // 연관된 객체에 null을 참조하려고 하면 조회가 일어난다
-        // null -> ssar LAZY 되어 있어서 없어야 하는데 하이버네이트가 없으니 알아서 찾아서 조회힌다
-        System.out.println(boarList.get(0).getUser().getUsername()); // 1번 (조회 O)
+        // Lazy Loading - 지연로딩
+        // 연관된 객체에 null을 참조하려고 하면 조회가 일어남 (조회 O)
+        System.out.println(boardList.get(0).getUser().getUsername()); // null -> ssar
+        System.out.println(boardList.get(3).getUser().getUsername());
     }
 
     @Test
