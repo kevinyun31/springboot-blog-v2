@@ -38,7 +38,7 @@ public class BoardController {
     }
 
     // 게시글 수정 요청 응답
-    @PostMapping("/board/update")
+    @PostMapping("/board/{id}/update")
     public String update(@PathVariable Integer id, BoardRequest.UpdateDTO updateDTO) { // 1.PathVarible 값 받기
         // where데이터, body데이터, session값
         boardService.게시글수정하기(id, updateDTO);
@@ -101,4 +101,4 @@ public class BoardController {
         return "redirect:/";
     }
 
-} // class
+} // class 
