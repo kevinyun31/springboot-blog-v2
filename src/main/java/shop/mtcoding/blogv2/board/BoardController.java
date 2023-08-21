@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blogv2._core.util.Script;
-import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
 
 @Controller
 public class BoardController {
@@ -21,12 +20,15 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
-    // 게시글 삭제
-    @PostMapping("/board/{id}/delete")
-    public String delete(@PathVariable Integer id) {
-        // 인증체크
-        boardService.삭제하기(id);
-        return Script.href("/");
+    @Autowired
+    private BoardRepository boardRepository;
+
+    // 게시글 수정 요청 응답
+    @PostMapping("/board/{id}/update")
+    public String update(@PathVariable Integer id, BoardRequest.UpdateDTO updateDTO) { // 1.PathVarible 값 받기
+        // where데이터, body데이터, session값
+        boardService.게시글수정하기(id, updateDTO);
+        return "redirect:/board/" + id;
     }
 
     // 게시글 수정 화면 호출
@@ -37,12 +39,12 @@ public class BoardController {
         return "board/updateForm";
     }
 
-    // 게시글 수정 요청 응답
-    @PostMapping("/board/{id}/update")
-    public String update(@PathVariable Integer id, BoardRequest.UpdateDTO updateDTO) { // 1.PathVarible 값 받기
-        // where데이터, body데이터, session값
-        boardService.게시글수정하기(id, updateDTO);
-        return "redirect:/board/" + id;
+    // 게시글 삭제
+    @PostMapping("/board/{id}/delete")
+    public @ResponseBody String delete(@PathVariable Integer id) {
+        // 인증체크
+        boardService.삭제하기(id);
+        return Script.href("/");
     }
 
     // 게시글 상세보기 화면 호출
@@ -51,6 +53,13 @@ public class BoardController {
         Board board = boardService.상세보기(id);
         model.addAttribute("board", board);
         return "board/detail";
+    }
+
+    // 게시글 상세보기 화면 호출 테스트
+    @GetMapping("/test/board/{id}")
+    public @ResponseBody Board testDetail(@PathVariable Integer id) {
+        Board board = boardRepository.mFindByIdJoinRepliesInUser(id).get();
+        return board;
     }
 
     // localhost:8080?page=1&keyword=바나나
@@ -86,19 +95,8 @@ public class BoardController {
     // 글쓰기 요청 응답
     @PostMapping("/board/save")
     public String save(BoardRequest.SaveDTO saveDTO) { // 1. 데이터 받기
-        // 테스트 후엔 주석처리 하기
-        // System.out.println("title : " +saveDTO.getTitle());
-        // System.out.println("content : " +saveDTO.getContent());
-
-        // 2. 인증체크 (:TODO)
-
-        // 3. 유효성 검사 (:TODO)
-
-        // 4. 핵심로직 호출 (서비스의 메서드 이용)
-
         boardService.글쓰기(saveDTO, 1);
-
         return "redirect:/";
     }
 
-} // class 
+} // class
