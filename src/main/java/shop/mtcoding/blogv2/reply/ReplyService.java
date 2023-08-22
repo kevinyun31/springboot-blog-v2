@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blogv2._core.error.ex.MyApiException;
 import shop.mtcoding.blogv2.board.Board;
 import shop.mtcoding.blogv2.board.BoardRepository;
 import shop.mtcoding.blogv2.reply.ReplyRequest.SaveDTO;
@@ -40,12 +41,27 @@ public class ReplyService {
         replyRepository.save(reply); // entity : Reply 객체
     }
 
-    // @Transactional
-    // public void 댓글삭제(Integer id, Integer sessionUserId) {
-    // // 권한체크
-    // Optional<Reply> reply = replyRepository.findById(id);
-    // if (replyOP.getUser) {
+   @Transactional
+    public void 댓글삭제(Integer id, Integer sessionUserId) {
 
-    // }
+        // replyRepository를 사용하여 주어진 id 값을 가진 댓글을 데이터베이스에서 조회합니다.
+        // 조회 결과는 Optional로 감싸집니다. 이를 통해 조회된 댓글이 존재하지 않는 경우를 처리할 수 있습니다.
+        Optional<Reply> replyOP = replyRepository.findById(id);
+
+        if (replyOP.isEmpty()) {
+            throw new MyApiException("삭제할 댓글이 없습니다");
+        }
+
+        // 조회된 댓글을 Reply 객체로 가져옵니다.
+        Reply reply = replyOP.get(); 
+
+        if (reply.getUser().getId() != sessionUserId) {
+            throw new MyApiException("해당 댓글을 삭제할 권한이 없습니다");
+        }
+
+        // 댓글을 데이터베이스에서 삭제하는 메소드입니다.
+        // 주어진 id에 해당하는 댓글을 삭제합니다.
+        replyRepository.deleteById(id);
+    }
 
 }

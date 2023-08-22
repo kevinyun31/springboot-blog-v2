@@ -61,12 +61,12 @@
             method: "delete"
         });
         let responseBody = await response.json();
-        if (responseBody.sucuess) {
-            location.reload;
+        if (responseBody.success) {
+            location.reload();
         } else {
             alert(responseBody.data);
         }
-    }
+    } 
 
     async function saveReply() {
         let requestBody = {
@@ -86,14 +86,12 @@
 
         let responseBody = await response.json();
         console.log(requestBody);
-        if (responseBody.sucuess) {
+        if (responseBody.success) {
             location.reload(); // ssr = 서버사이드 렌더링 
         } else {
             alert(responseBody.data);
         }
     }
 </script>
-
-
 
 {{> layout/footer}}
