@@ -21,4 +21,4 @@ public class BoardRequest {
         private String content; // 글 내용을 수정하는 변수
     }
 
-}
+} 

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2._core.util.Script;
 
 @Controller
@@ -21,13 +22,13 @@ public class UserController {
     private HttpSession session;
 
     // 브라우저 GET /logout 요청을 함, (request1)
-    // 서버는  / 주소를 응답의 헤더에 담음 (Location), 상태코드 302
+    // 서버는 / 주소를 응답의 헤더에 담음 (Location), 상태코드 302
     // 브라우저는 GET / 로 재용청을 함. (request2)
     // 최종적으로 index 페이지 응답받고 렌더링함
     // 로그아웃 요청 응답
     @GetMapping("/logout")
     public String logout() {
-        session.invalidate();
+        session.invalidate(); // 현재 세션을 무효화하여 사용자의 로그인 세션을 종료합니다. 사용자는 로그아웃 상태가 됩니다.
         return "redirect:/"; // 요청이 두번 일어남. 3백번대 응답 받고 다시 재요청 한다.
     }
 
@@ -42,7 +43,6 @@ public class UserController {
     // 회원가입 요청 응답
     @PostMapping("/join")
     public String join(UserRequest.JoinDTO joinDTO) {
-        // 10초짜리 코드
         userService.회원가입(joinDTO);
         return "user/loginForm"; // persist 초기화
     }
@@ -57,9 +57,6 @@ public class UserController {
     @PostMapping("/login")
     public @ResponseBody String login(UserRequest.LoginDTO loginDTO) {
         User sessionUser = userService.로그인(loginDTO);
-        if (sessionUser == null) {
-            return Script.back("로그인 실패");
-        }
         session.setAttribute("sessionUser", sessionUser);
         return Script.href("/");
     }
@@ -76,7 +73,7 @@ public class UserController {
     // return Script.href("/");
     // }
 
-    // 회원정보보기 화면 호출 
+    // 회원수정 화면 호출
     @GetMapping("/user/updateForm")
     public String updateForm(HttpServletRequest request) {
         User sessionUser = (User) session.getAttribute("sessionUser");

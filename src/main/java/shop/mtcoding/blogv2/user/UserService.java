@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -15,6 +16,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    
     @Transactional
     public void 회원가입(JoinDTO joinDTO) {
         User user = User.builder()
@@ -31,13 +33,13 @@ public class UserService {
 
         // 1. 유저네임 검증
         if (user == null) { // username이 존재하지 않음.
-            return null;
+            throw new MyException("유저네임이 없습니다");
         }
 
         // 2. 패스워드 검증
         // username이 존재함.
         if (!user.getPassword().equals(loginDTO.getPassword())) {
-            return null;
+            throw new MyException("패스워드가 잘 못 되었습니다");
         }
         // 3. 로그인 성공
         return user;
@@ -47,7 +49,8 @@ public class UserService {
     public User 회원정보보기(Integer id) {
         return userRepository.findById(id).get();
     }
-  @Transactional
+
+    @Transactional
     public User 회원수정(UpdateDTO updateDTO, Integer id) {
         // 1. 조회 (영속화)
         User user = userRepository.findById(id).get();
