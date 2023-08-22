@@ -6,13 +6,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApiUtil<T> {
-    private boolean sucuess; // true
+    private boolean success; // true
     private T data;  // 댓글쓰기 성공
 
     // 공통 DTO
-    public ApiUtil(boolean sucuess, T data) {
-        this.sucuess = sucuess;
+    public ApiUtil(boolean success, T data) {
+        this.success = success;
         this.data = data;
-    }
-   
+    }   
 }

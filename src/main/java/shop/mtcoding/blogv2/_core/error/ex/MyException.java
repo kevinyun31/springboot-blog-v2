@@ -4,4 +4,4 @@ public class MyException extends RuntimeException{ // 일반 요청
     public MyException(String message) {
         super(message);
     }
-}
+} 
