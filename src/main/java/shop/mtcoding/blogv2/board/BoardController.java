@@ -34,7 +34,7 @@ public class BoardController {
     // 게시글 수정 화면 호출
     @GetMapping("/board/{id}/updateForm")
     public String updateForm(@PathVariable Integer id, Model model) {
-        Board board = boardService.게시글수정보기(id);
+        Board board = boardService.상세보기(id);
         model.addAttribute("board", board); // request에 담는 것과 동일
         return "board/updateForm";
     }

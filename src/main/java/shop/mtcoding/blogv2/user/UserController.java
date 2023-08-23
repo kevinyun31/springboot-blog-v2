@@ -56,14 +56,14 @@ public class UserController {
     // M - V - C
     // 회원가입 요청 응답
     @PostMapping("/join")
-    public @ResponseBody String join(UserRequest.JoinDTO joinDTO) {
+    public String join(UserRequest.JoinDTO joinDTO) {
         // System.out.println(joinDTO.getPic().getOriginalFilename());
         // System.out.println(joinDTO.getPic().getSize());
         // System.out.println(joinDTO.getPic().getContentType());
 
         userService.회원가입(joinDTO);
         return "user/loginForm"; // persist 초기화
-    }
+    } 
 
     // 로그인화면 호출
     @GetMapping("/loginForm")

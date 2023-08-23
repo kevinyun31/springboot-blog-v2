@@ -74,11 +74,27 @@ public class UserService {
 
     @Transactional
     public User 회원수정(UpdateDTO updateDTO, Integer id) {
+        
+          // (유니버셜 유니크 아이디)네트워크상 고유성을 보장하는 ID를 만들기 위한 표준 규약
+        UUID uuid = UUID.randomUUID();
+        String filename = uuid + "_" + updateDTO.getPic().getOriginalFilename();
+        System.out.println("fileName : " + filename);
+
+        // 프로젝트 실행 파일변경 -> blogv2-1.0.jar
+        // 해당 실행파일 경로에 images 폴더가 필요함
+        Path filePath = Paths.get(MyPath.IMG_PATH + filename);
+        try {
+            Files.write(filePath, updateDTO.getPic().getBytes());
+        } catch (Exception e) {
+           throw new MyException(e.getMessage());
+        }
+
         // 1. 조회 (영속화)
         User user = userRepository.findById(id).get();
 
         // 2. 변경
         user.setPassword(updateDTO.getPassword());
+        user.setPicUrl(filename);
 
         return user;
     } // 3. flush

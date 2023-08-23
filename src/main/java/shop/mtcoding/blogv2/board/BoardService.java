@@ -60,15 +60,6 @@ public class BoardService {
         }
     }
 
-    public Board 게시글수정보기(Integer id) {
-        // board 만 가져오면 된다!!
-        Optional<Board> boardOP = boardRepository.findById(id);
-        if (boardOP.isPresent()) {
-            return boardOP.get();
-        } else {
-            throw new RuntimeException(id + "는 찾을 수 없습니다");
-        }
-    }
 
     @Transactional
     public void 게시글수정하기(Integer id, UpdateDTO updateDTO) {

@@ -1,14 +1,29 @@
 {{> layout/header}}
-
+<style>
+    .circle_avatar {
+        width: 200px;
+        height: 200px;
+        border-radius: 100px;
+    }
+</style>
 <div class="container p-5">
 
     <div class="card">
+
         <div class="card-header"><b>회원수정을 해주세요</b></div>
+
+        <div class="card-header d-flex justify-content-center">
+            <img id="preview" class="circle_avatar" src="/images/{{user.picUrl}}">
+        </div>
+
         <div class="card-body">
-            <form action="/user/update" method="post">
+
+            <form action="/user/update" method="post" enctype="multipart/form-data">
+
 
                 <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="Enter username" disabled value="{{user.username}}">
+                    <input type="text" class="form-control" placeholder="Enter username" disabled
+                        value="{{user.username}}">
                 </div>
 
                 <div class="mb-3">
@@ -19,10 +34,35 @@
                     <input type="email" class="form-control" placeholder="Enter email" disabled value="{{user.email}}">
                 </div>
 
+                <div class="mb-3">
+                    <input type="file" class="form-control" placeholder="Enter pic" onchange="changePic(event)" name="pic" >
+                </div>
+
+
                 <button type="submit" class="btn btn-primary form-control">회원가입수정</button>
+
             </form>
         </div>
     </div>
 </div>
 
-{{> layout/footer}} 
+<script>
+    function changePic(e1) {
+        console.log(e1);
+        let f = e1.srcElement.files[0];
+        console.log(f);
+
+        // 하드디스크 파일을 메모리로 끌어올리기 위해 버퍼에 담는다.
+        let reader = new FileReader();
+
+        // 콜백함수 = 다른(밑의) 이벤트가 끝나고 나서 실행된다. 
+        reader.onload = function (e2) { // 파일이 다 읽어지면 콜백됨
+            let previewEl = document.querySelector("#preview");
+            previewEl.setAttribute("src", e2.target.result);
+        }
+
+        reader.readAsDataURL(f); // 파일 읽기 onload() <= 버퍼의 파일을 비동기로 읽는다 
+    }
+</script>
+
+{{> layout/footer}}
