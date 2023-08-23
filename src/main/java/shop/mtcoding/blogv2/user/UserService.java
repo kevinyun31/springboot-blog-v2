@@ -1,10 +1,17 @@
 package shop.mtcoding.blogv2.user;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blogv2._core.error.ex.MyApiException;
 import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.vo.MyPath;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -16,13 +23,28 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    
     @Transactional
     public void 회원가입(JoinDTO joinDTO) {
+
+        // (유니버셜 유니크 아이디)네트워크상 고유성을 보장하는 ID를 만들기 위한 표준 규약
+        UUID uuid = UUID.randomUUID();
+        String filename = uuid + "_" + joinDTO.getPic().getOriginalFilename();
+        System.out.println("fileName : " + filename);
+
+        // 프로젝트 실행 파일변경 -> blogv2-1.0.jar
+        // 해당 실행파일 경로에 images 폴더가 필요함
+        Path filePath = Paths.get(MyPath.IMG_PATH + filename);
+        try {
+            Files.write(filePath, joinDTO.getPic().getBytes());
+        } catch (Exception e) {
+           throw new MyException(e.getMessage());
+        }
+
         User user = User.builder()
                 .username(joinDTO.getUsername())
                 .password(joinDTO.getPassword())
                 .email(joinDTO.getEmail())
+                .picUrl(filename)
                 .build();
         userRepository.save(user); // em.persist
 
@@ -60,5 +82,12 @@ public class UserService {
 
         return user;
     } // 3. flush
+
+    public void 중복체크(String username) {
+     User user = userRepository.findByUsername(username);
+     if (user != null) {
+        throw new MyApiException("유저네임을 이미 사용 중 입니다.");
+     }
+    }
 
 }

@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.error.ex.MyApiException;
+import shop.mtcoding.blogv2._core.util.ApiUtil;
 import shop.mtcoding.blogv2._core.util.Script;
 
 @Controller
@@ -38,11 +39,28 @@ public class UserController {
     public String joinForm() {
         return "user/joinForm";
     }
+    
+    // 회원가입 중복 체크
+    @GetMapping("/api/check")
+    public @ResponseBody ApiUtil<String> check(String username){
+        // 유효성검사
+        if(username.isBlank()){
+            throw new MyApiException("유저네임을 입력하세요.");
+        }
+        // 핵심로직
+        userService.중복체크(username);
+        // 응답
+        return new ApiUtil<String>(true, "중복체크 완료");
+    }
 
     // M - V - C
     // 회원가입 요청 응답
     @PostMapping("/join")
-    public String join(UserRequest.JoinDTO joinDTO) {
+    public @ResponseBody String join(UserRequest.JoinDTO joinDTO) {
+        // System.out.println(joinDTO.getPic().getOriginalFilename());
+        // System.out.println(joinDTO.getPic().getSize());
+        // System.out.println(joinDTO.getPic().getContentType());
+
         userService.회원가입(joinDTO);
         return "user/loginForm"; // persist 초기화
     }

@@ -25,7 +25,8 @@ public class ReplyController {
   private HttpSession session;
 
   // 댓글 삭제
-  @DeleteMapping("/api/reply/{id}/delete")
+  @DeleteMapping("/api/reply/{id}/delete")  
+  // json으로 받아라고 헤더에 @ResponseBody, @RequestBody를 넣어서 json 객체로 보내고 받고 가능 해진다.
   public @ResponseBody ApiUtil<String> delete(@PathVariable Integer id) {
 
     // 현재 세션에서 "sessionUser"라는 이름으로 저장된 사용자 정보를 가져옵니다.
@@ -47,6 +48,7 @@ public class ReplyController {
 
   // 댓글 쓰기
   @PostMapping("/api/reply/save")
+  // json으로 받아라고 헤더에 @ResponseBody, @RequestBody를 넣어서 json 객체로 보내고 받고 가능 해진다.
   public @ResponseBody ApiUtil<String> save(@RequestBody ReplyRequest.SaveDTO saveDTO) {
     User sessionUser = (User) session.getAttribute("sessionUser");
     if (sessionUser == null) {
