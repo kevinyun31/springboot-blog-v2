@@ -10,7 +10,7 @@ public class ApiUtil<T> {
     private T data;  // 댓글쓰기 성공
 
     // 공통 DTO
-    public ApiUtil(boolean success, T data) {
+    public ApiUtil(boolean sucuess, T data) {
         this.success = success;
         this.data = data;
     }   

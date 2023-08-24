@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.mtcoding.blogv2.board.Board;
-import shop.mtcoding.blogv2.board.Board.BoardBuilder;
 import shop.mtcoding.blogv2.user.User;
 
 @NoArgsConstructor

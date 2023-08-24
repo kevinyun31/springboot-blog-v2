@@ -100,7 +100,9 @@ public class UserService {
     } // 3. flush
 
     public void 중복체크(String username) {
+        
      User user = userRepository.findByUsername(username);
+
      if (user != null) {
         throw new MyApiException("유저네임을 이미 사용 중 입니다.");
      }
