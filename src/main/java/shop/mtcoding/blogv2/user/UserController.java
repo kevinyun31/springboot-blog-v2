@@ -47,10 +47,10 @@ public class UserController {
         if(username.isBlank()){
             throw new MyApiException("유저네임을 입력하세요.");
         }
-        System.out.println("테스트"+2);
+        
         // 핵심로직
         userService.중복체크(username);
-        System.out.println("테스트"+1);
+       
         // 응답
         return new ApiUtil<String>(true, "중복체크 완료");
         
